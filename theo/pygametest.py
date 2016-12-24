@@ -4,22 +4,28 @@ from pygame.locals import *
 pygame.init()
 
 
-fenetre = pygame.display.set_mode((640,480), RESIZABLE)
+fenetre = pygame.display.set_mode((800,600), RESIZABLE)
 
 fond = pygame.image.load("fond.jpg").convert()
 fenetre.blit(fond, (0,0))
 
 fond1 = pygame.image.load("backround.jpg").convert()
-fenetre.blit(fond1, (213,160))
+fenetre.blit(fond1, (213,0))
 
-perso = pygame.image.load("balle.jpg").convert()
-perso.set_colorkey((255,255,255))
-position_perso = perso.get_rect()
-fenetre.blit(perso, position_perso)
+balle = pygame.image.load("balle.png").convert_alpha()
+fenetre.blit(balle, (10,100))
+position_balle = balle.get_rect()
+fenetre.blit(balle, (position_balle))
 
+left = pygame.image.load("left.png").convert_alpha()
+fenetre.blit(left, (250,500))
+imagerect = left.get_rect()
+
+right = pygame.image.load("right.png").convert_alpha()
+fenetre.blit(right, (450,500))
 pygame.display.flip()
 
-
+angle = 0
 continuer = 1
 
 #Boucle infinie
@@ -31,14 +37,49 @@ while continuer:
 			if event.type == KEYDOWN and event.key == K_ESCAPE:     #Si on presse la touche echap
 				continuer = 0      #On arrête la boucle
 			if event.key == K_DOWN:	#Si "flèche bas On descend le perso"
-				position_perso = position_perso.move(0,20)
+				position_balle = position_balle.move(0,20)
 			if event.key == K_UP:	#Si "flèche bas On descend le perso"
-				position_perso = position_perso.move(0,-20)
+				position_balle = position_balle.move(0,-20)
 			if event.key == K_RIGHT:	#Si "flèche bas On descend le perso"
-				position_perso = position_perso.move(20,0)
+				position_balle = position_balle.move(20,0)
 			if event.key == K_LEFT:	#Si "flèche bas On descend le perso"
-				position_perso = position_perso.move(-20,0)
+				position_balle = position_balle.move(-20,0)
+			if event.key == K_a:
+				left = pygame.transform.rotate(left, 90)
+				fenetre.blit(fond, (0,0))
+				fenetre.blit(fond1, (213,0))
+				fenetre.blit(left, (250,500))
+				fenetre.blit(right, (450,500))
+				fenetre.blit(balle, position_balle)
+				pygame.display.flip()
+				pygame.time.wait(500)
+				left = pygame.transform.rotate(left, 270)
+				fenetre.blit(fond, (0,0))
+				fenetre.blit(fond1, (213,0))
+				fenetre.blit(left, (250,500))
+				fenetre.blit(right, (450,500))
+				fenetre.blit(balle, position_balle)			
+				pygame.display.flip()
+			if event.key == K_z:
+				right = pygame.transform.rotate(right, 270)
+				fenetre.blit(fond, (0,0))
+				fenetre.blit(fond1, (213,0))
+				fenetre.blit(left, (250,500))
+				fenetre.blit(right, (450,500))
+				fenetre.blit(balle, position_balle)
+				pygame.display.flip()
+				pygame.time.wait(500)
+				right = pygame.transform.rotate(right, 90)
+				fenetre.blit(fond, (0,0))
+				fenetre.blit(fond1, (213,0))
+				fenetre.blit(left, (250,500))
+				fenetre.blit(right, (450,500))
+				fenetre.blit(balle, position_balle)			
+				pygame.display.flip()
+	pygame.display.flip()
 	fenetre.blit(fond, (0,0))
-	fenetre.blit(fond1, (213,160))
-	fenetre.blit(perso, position_perso)
+	fenetre.blit(fond1, (213,0))
+	fenetre.blit(left, (250,500))
+	fenetre.blit(right, (450,500))
+	fenetre.blit(balle, position_balle)
 	pygame.display.flip()
