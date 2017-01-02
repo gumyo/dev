@@ -19,10 +19,10 @@ fenetre.blit(balle, (position_balle))
 
 left = pygame.image.load("left.png").convert_alpha()
 fenetre.blit(left, (250,500))
-imagerect = left.get_rect()
 
 right = pygame.image.load("right.png").convert_alpha()
 fenetre.blit(right, (450,500))
+
 pygame.display.flip()
 
 angle = 0
