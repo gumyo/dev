@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.5
 import pygame
 from pygame.locals import *
+from math import *
 pygame.init()
 
 
@@ -28,6 +29,7 @@ right = pygame.image.load("right.png").convert_alpha()
 pygame.display.flip()
 
 
+
 continuer = 1
 x, y = 589, 480
 position_balle = (x, y)
@@ -37,8 +39,16 @@ Pbordure = (213, 0)
 Pcouloir = (580, 225)
 Ptrileft = (213,415)
 Ptriright = (519,443)
-Pleft = (310,500)
-Pright = (437,500)
+Pleft = (173,350)
+Pright = (433,430)
+
+def rotPoint(point, axis, ang):
+	x, y = point[0] - axis[0], point[1] - axis[1]
+	radius = sqrt(x*x + y*y) 
+	RAng = radians(ang)
+	h = axis[0] + ( radius * cos(RAng) )
+	v = axis[1] + ( radius * sin(RAng) )
+	return h, v
 
 #Boucle infinie
 while continuer:
@@ -61,6 +71,7 @@ while continuer:
 				x = x - 20
 				position_balle = (x, y)
 			if event.key == K_a:
+				#left.center = rotPoint(left.center, (15,15), 90)
 				left = pygame.transform.rotate(left, 90)
 				fenetre.blit(fond, Pfond)
 				fenetre.blit(fond1, Pfond1)
@@ -83,7 +94,8 @@ while continuer:
 				fenetre.blit(left, Pleft)
 				fenetre.blit(right, Pright)
 				fenetre.blit(balle, position_balle)			
-				pygame.display.flip()
+				pygame.display
+
 			if event.key == K_z:
 				right = pygame.transform.rotate(right, 270)
 				fenetre.blit(fond, Pfond)
