@@ -6,11 +6,11 @@ scoreRelativeTime, phyRelativeTime = 0, 0
 
 def time(commandTimer, scoreRelativeTime, phyRelativeTime):
     if commandTimer == 'pause':
-        scoreRelativeTime = pygame.time.get_ticks() + scoreRelativeTime
-        phyRelativeTime = pygame.time.get_ticks() + phyRelativeTime
+        scoreRelativeTime += pygame.time.get_ticks()
+        phyRelativeTime += pygame.time.get_ticks()
     elif commandTimer == 'play':
-        scoreRelativeTime = scoreRelativeTime - pygame.time.get_ticks()
-        phyRelativeTime = phyRelativeTime - pygame.time.get_ticks()
+        scoreRelativeTime -= pygame.time.get_ticks()
+        phyRelativeTime -= pygame.time.get_ticks()
     elif commandTimer == 'reset':
         scoreRelativeTime = 0 - pygame.time.get_ticks()
         phyRelativeTime = 0 - pygame.time.get_ticks()
