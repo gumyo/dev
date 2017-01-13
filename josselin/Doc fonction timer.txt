@@ -1,23 +1,23 @@
-Variables générales :
-	- scoreRelativeTime : Temps déduit au timer score pour les commandes 'pause', 'play' et 'scoreReset'
-	- phyRelativeTime : Temps déduit au timer score pour les commandes 'pause', 'play', et 'phyReset'
+Variables gÃ©nÃ©rales :
+	- scoreRelativeTime : Temps dÃ©duit au timer score pour les commandes 'pause', 'play' et 'scoreReset'
+	- phyRelativeTime : Temps dÃ©duit au timer score pour les commandes 'pause', 'play', et 'phyReset'
 
 Variables locales :
-	- commmandTimer : Commande en paramètre de la fonction
-	- scoreTime : Variable pour separation des minutes/secondes du timer score en vu du chrono à afficher
+	- commmandTimer : Commande en paramÃ¨tre de la fonction
+	- scoreTime : Variable pour separation des minutes/secondes du timer score en vu du chrono Ã  afficher
 
 Commandes :
-	- reset : Commande à utiliser au début d'une nouvelle partie lorsque la balle est lancée. Elle remet à 0 les timer et les relancent.
+	- reset : Commande Ã  utiliser au dÃ©but d'une nouvelle partie lorsque la balle est lancÃ©e. Elle remet Ã  0 les timer et les relancent.
 	- pause : Mise en pause des timer score et physique
 	- play : Relancement des timer score et physique
-	- scoreTime : Retourne au positions 2, 3, 4 et 5 de la liste les valeurs respectives des dizaines de minutes, des minutes, des dizaines de secondes et des secondes
-	- phyTime : Retourne à la position 2 de la liste la valeur du timer en ms
-	- scoreReset : Remet à 0 le timer pour le score et le relance
-	- phyReset : Remet à 0 le timer pour la physique et le relance
+	- scoreTime : Retourne au positions 0, 1, 2 et 3 de la liste les valeurs respectives des dizaines de minutes, des minutes, des dizaines de secondes et des secondes
+	- phyTime : Retourne la valeur du timer en ms
+	- scoreReset : Remet Ã  0 le timer pour le score et le relance
+	- phyReset : Remet Ã  0 le timer pour la physique et le relance
 
 
-Détails sur l'utilisation de la fonction :
+DÃ©tails sur l'utilisation de la fonction :
 	- Cette fonction implique l'utilisation de la ligne de commande 'pygame.init()'
 	- La commande 'play' doit imperativement suivre la commande 'pause'
 
-	- Pour utiliser la fonction time : *variable X* = time(*commande*, scoreRelativeTime, phyRelativeTime). Elle renvoie une list avec en position 0 et 1 les 2 variables générales et dans les autres position retourne la valeur demandée si elle existe (ex: pause ne retourne pas de valeur, phyTime oui)
+	- Pour utiliser la fonction time : *variable X* = time(*commande*). Elle retourne la valeur demandÃ©e si elle existe (ex: pause ne retourne pas de valeur, phyTime oui) soit en list, soit en simple variable
