@@ -1,0 +1,15 @@
+Variable globales :
+	- lastBestScore [option] : enregistre la valeur du dernier meilleur score pour la comparrer au nouveau score
+	- score : valeur du score en fin de partie; variable mise en parametre de la fonction
+
+Variables locales :
+	- fichierScore : Variable dans laquelle on ouvre le fichier (fichierScore.txt)
+	- tableScore : liste des valeur du fichier pour chaqu'une des 5 lignes
+	- newScore : nouvelle liste des valeurs du fichieer si ce dernier est modifié
+	- rang et lignes : différentes variable pour le decompte et la distribution es valeur dans la nouvelle liste si elle existe
+
+Propriété de la fonction :
+	- pour l'appeler, il fait utiliser la commande sauv(score) avec score le resultat du joueur en fin de partie. Ne pas appeler la fonction dans un autre cas qu'en fin de partie !
+	- L'utilisation de la fonction implique un fichier 'fichierScore.txt' avec un 0 par ligne + une ligne vide à la suite
+	- La fonction revoit les 5 meilleurs scores et ne precise pas si le meilleur score a été battu
+	- il est possible de changer le nombre de meilleur score retourné et traité
