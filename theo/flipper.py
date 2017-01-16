@@ -75,10 +75,10 @@ while continuer:
 			if event.key == K_LEFT:	#Si "flèche bas On descend le perso"
 				x = x - 20
 				position_balle = (x, y)
-			if event.key == K_a:
+			while pygame.key.get_pressed()[K_a]:
 				left = pygame.transform.rotate(left, 90)
 				aff()
-				pygame.time.wait(200)
+				#pygame.time.wait(200)
 				left = pygame.transform.rotate(left, 270)
 				aff()
 			if event.key == K_z:
