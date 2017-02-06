@@ -2,6 +2,8 @@
 import pygame
 from pygame.locals import *
 from math import *
+import math
+import time
 pygame.init()
 
 
@@ -14,7 +16,6 @@ fond1 = pygame.image.load("backround.png").convert()
 contour = pygame.image.load("contour.png").convert_alpha()
 
 balle = pygame.image.load("balle.png").convert_alpha()
-position_balle = balle.get_rect()
 
 rampe = pygame.image.load("rampe.png").convert_alpha()
 
@@ -56,59 +57,120 @@ left = pygame.image.load("left.png").convert_alpha()
 
 right = pygame.image.load("right.png").convert_alpha()
 
+bumper_un = pygame.image.load("Bumper_un.png").convert_alpha()
+
+bumper_deux = pygame.image.load("Bumper_quatre_gros.png").convert_alpha()
+
+bumper_trois = pygame.image.load("Bumper_trois_central.png").convert_alpha()
+
+bumper_quatre = pygame.image.load("Bumper_deux.png").convert_alpha()
+
+bumper_cinq = pygame.image.load("Bumper_cinq.png").convert_alpha()
+
+petitbarrage = pygame.image.load("petitBarage.png").convert_alpha()
+
+Cchambre = pygame.image.load("ContourChambre.png").convert_alpha()
+
+Echambre = pygame.image.load("interieurChambre.png").convert_alpha()
+
 pygame.display.flip()
 
-
+#(585, 380)
 
 continuer = 1
 x, y = 585, 490
-position_balle = (585, 380)
-Pfond = (0,0)
-Pfond1 = (213, 0)
-Pcontour = (213, 0)
-Pleft = (180,380)
-Pright = (322,382)
-Prampe = (575, 180)
-Pcache = (577, 523)
-Pcouloir = (575, 177)
-Ppoussoir = (x, y)
-Pporte_couloir = (573, 185)
-Pstar = (557, 500)
-Pstar_socle = (557, 520)
-Pobsright = (528, 203)
-Pobsleft = (228	, 285)
 press = pygame.key.set_repeat(1,1000)
-
+mouv = balle.get_rect()
+mouv.x = 586
+mouv.y = 479
+perm = False
+collision = False
+compteur = 0
+temps = 0
 def aff():
-	fenetre.blit(fond, Pfond)
-	fenetre.blit(fond1, Pfond1)
-	fenetre.blit(contour, Pcontour)
-	fenetre.blit(couloir, Pcouloir)
-	fenetre.blit(rampe, Prampe)
-	fenetre.blit(poussoir, Ppoussoir)
-	fenetre.blit(cache, Pcache)
-	fenetre.blit(obstacle_right, Pobsright)
-	fenetre.blit(obstacle_left, Pobsleft)
-	fenetre.blit(porte_couloir, Pporte_couloir)
-	fenetre.blit(star, Pstar)
-	fenetre.blit(star_socle, Pstar_socle)
+	fenetre.blit(fond, (0,0))
+	fenetre.blit(fond1, (213, 0))
+	fenetre.blit(contour, (213, 0))
+	fenetre.blit(couloir, (575, 177))
+	fenetre.blit(rampe, (575, 180))
+	fenetre.blit(poussoir, (x, y))
+	fenetre.blit(cache, (577, 523))
+	fenetre.blit(obstacle_right, (528, 203))
+	fenetre.blit(obstacle_left, (228, 285))
+	fenetre.blit(porte_couloir, (573, 185))
+	fenetre.blit(star, (557, 500))
+	fenetre.blit(star_socle, (557, 520))
 	fenetre.blit(Item_raquette_droite, (485, 437))
 	fenetre.blit(Top_droite, (520, 365))
 	fenetre.blit(Bloqueur_droit, (480, 430))
 	fenetre.blit(Bloqueur_gauche, (295, 430))
 	fenetre.blit(Item_raquette_gauche, (250, 420))
 	fenetre.blit(barrage_gauche, (225, 405))
+	fenetre.blit(bumper_un, (460, 300))
+	fenetre.blit(bumper_deux, (390, 300))
+	fenetre.blit(bumper_trois, (460, 230))
+	fenetre.blit(bumper_quatre, (530, 185))
+	fenetre.blit(bumper_cinq, (410, 190))
+	fenetre.blit(petitbarrage, (385	, 230))
+	fenetre.blit(Cchambre, (250, 100))
+	fenetre.blit(Echambre, (285, 100))
 	fenetre.blit(cible_1, (370, 480))
-	fenetre.blit(cible_3, (315, 415))
+	fenetre.blit(cible_3, (335, 435))
 	fenetre.blit(cible_5, (370, 400))
-	fenetre.blit(left, Pleft)
-	fenetre.blit(right, Pright)
-	fenetre.blit(balle, position_balle)
+	fenetre.blit(left, (180,380))
+	fenetre.blit(right, (322,382))
+	fenetre.blit(balle, mouv)
 	pygame.display.flip()
+
+#5, 0, 39 (bleu)
+#149, 54, 57 (rose)
+def mouvv(mouv):
+	global perm, collision
+	test = fenetre.get_at((mouv.x, mouv.y))
+	alpha = 0
+	print(test)
+	if test == (5, 0, 39, 255) or test == (149, 54, 57, 255):
+		print("fck")
+		grou = False
+		if perm == True:
+			perm = False
+			collision = True
+			alpha = 50
+		else:
+			perm = False
+			collision = True
+			alpha = 80
+	if collision:
+		mouv.y +=1 * math.sin(alpha)
+		mouv.x -=1 * math.cos(alpha)
+	#couleur_position_balle = int('%02x%02x%02x' % (r1, g1, b1), 16)
+	if perm:
+		mouv.y -=1 * math.sin(alpha)
+		mouv.x +=1 * math.cos(alpha)
+	return mouv
+#(rgb 152 31 52)
+
+'''def try()
+	global x1, y1
+	if 
+	if x1 > 0 and y > 0:'''
+'''def temps(perm):
+	global temps, compteur
+	if perm:
+		compteur += 1
+	if compteur == 100:
+		temps += 1
+		compteur =0
+	print(temps)
+	return temps, compteur'''
+
+
 
 #Boucle infinie
 while continuer:
 	aff()
+	mouvv(mouv)
+	pygame.time.Clock().tick(200)
 	for event in pygame.event.get():   #On parcours la liste de tous les événements reçus
 		if event.type == QUIT:     #Si on clique sur la croix.
 			continuer = 0      #On arrête la boucle
@@ -121,13 +183,17 @@ while continuer:
 				right = pygame.transform.rotate(right, 270)
 			if event.key == K_SPACE:
 				press
-				y = y+10
+				perm = False
+				mouv.x = 586
+				mouv.y = 479
 				Ppoussoir = (x, y)
 		elif event.type == KEYUP:
 			if event.key == K_SPACE:
+				perm = True
 				y = 490
 				Ppoussoir = (x, y)
 			if event.key == K_a:
 				left = pygame.transform.rotate(left, 270)
 			if event.key == K_z:
 				right = pygame.transform.rotate(right, 90)
+		#temps(perm)
