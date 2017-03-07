@@ -87,6 +87,7 @@ perm = False
 collision = False
 compteur = 0
 temps = 0
+dep = 200
 def aff():
 	fenetre.blit(fond, (0,0))
 	fenetre.blit(fond1, (213, 0))
@@ -124,13 +125,11 @@ def aff():
 
 #5, 0, 39 (bleu)
 #149, 54, 57 (rose)
-def mouvv(mouv):
+def mouvv(mouv, dep):
 	global perm, collision
 	test = fenetre.get_at((mouv.x, mouv.y))
-	alpha = 0
-	print(test)
+	alpha = 1
 	if test == (5, 0, 39, 255) or test == (149, 54, 57, 255):
-		print("fck")
 		grou = False
 		if perm == True:
 			perm = False
@@ -141,6 +140,8 @@ def mouvv(mouv):
 			collision = True
 			alpha = 80
 	if collision:
+		dep += 100
+		alpha = -1
 		mouv.y +=1 * math.sin(alpha)
 		mouv.x -=1 * math.cos(alpha)
 	#couleur_position_balle = int('%02x%02x%02x' % (r1, g1, b1), 16)
@@ -148,34 +149,17 @@ def mouvv(mouv):
 		mouv.y -=1 * math.sin(alpha)
 		mouv.x +=1 * math.cos(alpha)
 	return mouv
-#(rgb 152 31 52)
-
-'''def try()
-	global x1, y1
-	if 
-	if x1 > 0 and y > 0:'''
-'''def temps(perm):
-	global temps, compteur
-	if perm:
-		compteur += 1
-	if compteur == 100:
-		temps += 1
-		compteur =0
-	print(temps)
-	return temps, compteur'''
 
 
-
-#Boucle infinie
 while continuer:
 	aff()
-	mouvv(mouv)
-	pygame.time.Clock().tick(200)
+	mouvv(mouv, dep)
+	pygame.time.Clock().tick(dep)
 	for event in pygame.event.get():   #On parcours la liste de tous les événements reçus
 		if event.type == QUIT:     #Si on clique sur la croix.
 			continuer = 0      #On arrête la boucle
 		if event.type == KEYDOWN:
-			if event.type == KEYDOWN and event.key == K_ESCAPE:     #Si on presse la touche echap
+			if event.key == K_ESCAPE:     #Si on presse la touche echap
 				continuer = 0      #On arrête la boucle
 			if event.key == K_a:
 				left = pygame.transform.rotate(left, 90)
@@ -184,8 +168,7 @@ while continuer:
 			if event.key == K_SPACE:
 				press
 				perm = False
-				mouv.x = 586
-				mouv.y = 479
+				y += 10
 				Ppoussoir = (x, y)
 		elif event.type == KEYUP:
 			if event.key == K_SPACE:
@@ -196,4 +179,3 @@ while continuer:
 				left = pygame.transform.rotate(left, 270)
 			if event.key == K_z:
 				right = pygame.transform.rotate(right, 90)
-		#temps(perm)
