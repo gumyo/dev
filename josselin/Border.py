@@ -4,28 +4,34 @@ import pygame
 from pygame.locals import *
 import pymunk
 import pymunk.pygame_util
+from math import sqrt
+from math import cos
+from math import sin
+from math import asin
 
-def add_arc5(cord1, cord2, cord3, cord4, cord5, cord6, space, body, largeur_trait):
-    l1 = pymunk.Segment(body, cord1, cord2, largeur_trait)
-    l2 = pymunk.Segment(body, cord2,  cord3, largeur_trait)
-    l3 = pymunk.Segment(body, cord3, cord4, largeur_trait)
-    l4 = pymunk.Segment(body, cord4, cord5, largeur_trait)
-    l5 = pymunk.Segment(body, cord5, cord6, largeur_trait)
 
-    space.add(l1, l2, l3, l4, l5)
+def arcG(A, B, C, body, space, largeur_trait):
+    R = sqrt((C[0] - A[0]) ** 2 + (C[1] - A[1]) ** 2)
+    coeff = round(sqrt((B[0] - A[0]) ** 2 + (B[1] - A[1]) ** 2)) + 3
+    AB = [B[0] - A[0], B[1] - A[1]]
+    CA = [A[0] - C[0], A[1] - C[1]]
+    alpha = asin(sqrt(AB[0] ** 2 + AB[1] ** 2) / (2 * R)) / 3.14159265 * 360  # calcul de l'angle
+    omega = alpha / coeff
+    Cord1 = [C[0] + sin(omega / 2262) * R * (-1 if CA[0] < 0 else 1), C[1] + cos(omega / 2262) * R * (-1 if CA[1] < 0 else 1)]
 
-def add_arc9(cord1, cord2, cord3, cord4, cord5, cord6, cord7, cord8, cord9, cord10, space, body, largeur_trait):
-    l1 = pymunk.Segment(body, cord1, cord2, largeur_trait)
-    l2 = pymunk.Segment(body, cord2,  cord3, largeur_trait)
-    l3 = pymunk.Segment(body, cord3, cord4, largeur_trait)
-    l4 = pymunk.Segment(body, cord4, cord5, largeur_trait)
-    l5 = pymunk.Segment(body, cord5, cord6, largeur_trait)
-    l6 = pymunk.Segment(body, cord6, cord7, largeur_trait)
-    l7 = pymunk.Segment(body, cord7, cord8, largeur_trait)
-    l8 = pymunk.Segment(body, cord8, cord9, largeur_trait)
-    l9 = pymunk.Segment(body, cord9, cord10, largeur_trait)
+    lCord = []
+    lCord.append(A if (Cord1[0] - A[0]) ** 2 + (Cord1[1] - A[1]) ** 2 < (Cord1[0] - B[0]) ** 2 + (Cord1[1] - B[1]) ** 2 else B)
 
-    space.add(l1, l2, l3, l4, l5, l6, l7, l8, l9)
+    for i in range(1, coeff):
+        cordx = C[0] + sin(omega * i / 360 * 2 * 3.14159265) * R * (-1 if CA[0] < 0 else 1)
+        cordy = C[1] + cos(omega * i / 360 * 2 * 3.14159265) * R * (-1 if CA[1] < 0 else 1)
+        lCord.append([cordx, cordy])
+
+    lCord.append(B if (Cord1[0] - A[0]) ** 2 + (Cord1[1] - A[1]) ** 2 < (Cord1[0] - B[0]) ** 2 + (Cord1[1] - B[1]) ** 2 else A)
+
+    for i in range(0, len(lCord) - 1):
+        space.add(pymunk.Segment(body, lCord[i], lCord[i+1], largeur_trait))
+
 
 def add_lines(space):
     rotation_center_body = pymunk.Body(body_type = pymunk.Body.STATIC)
@@ -41,10 +47,10 @@ def add_lines(space):
     l5 = pymunk.Segment(body, (376.0, 480.0), (376.0, 67.0), largeur_trait)
     l6 = pymunk.Segment(body, (333.0, 67.0), (376.0, 67.0), largeur_trait)
 
-    add_arc5((5.0, 75.0), (29.0, 47.3), (58.3, 24.5), (91.1, 8.9), (126.6, -2.1), (160.0, -5.0), space, body, largeur_trait)
-    add_arc5((190.0, -5.0), (222.2, -1.6), (254.5, 7.1), (284.6, 22.2), (311.2, 42.7), (333.0, 67.0), space, body,largeur_trait)
-    add_arc9((376.0, 480.0), (374.4, 492.6), (370.6, 504.8), (364.8, 516.1), (357.0, 526.2), (347.6, 534.8), (336.9, 541.7), (325.1, 546.6), (312.7, 549.4), (300.0, 550.0), space, body,largeur_trait)
-    add_arc9((5.0, 515.0), (5.4, 518.4), (6.35, 521.64), (7.9, 524.7), (9.9, 527.4), (12.35, 529.75), (15.2, 531.65), (18.3, 533), (21.5, 533.8), (25.0, 534.0), space, body, largeur_trait)
+    arcG((5.0, 75), (160, -5), (160, 185), body, space, largeur_trait)
+    arcG((190.0, -5.0), (333.0, 67.0), (190, 173), body, space, largeur_trait)
+    arcG((5, 515), (25, 534), (24.5, 514.5), body, space, largeur_trait)
+    arcG((376, 480), (300, 550), (303, 477), body, space, largeur_trait)
 
     rotation_center_joint = pymunk.PinJoint(body, rotation_center_body, (0, 0), (0, 0))
     rotation_center_joint2 = pymunk.PinJoint(body, rotation_center_body, (390, 0), (390, 0))
@@ -54,7 +60,7 @@ def add_lines(space):
 def main():
     pygame.init()
     fenetre = pygame.display.set_mode((800,600), RESIZABLE)
-    pygame.display.set_caption("Joints. Just wait and the L will tip over")
+    pygame.display.set_caption("Border")
     clock = pygame.time.Clock()
 
     space = pymunk.Space()
