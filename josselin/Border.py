@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3.6m
 import sys, random
 import pygame
 from pygame.locals import *
