@@ -169,7 +169,7 @@ def add_lines(space):
     rotation_center_body = pymunk.Body(body_type=pymunk.Body.STATIC)
     rotation_center_body.position = (223, 10)
 
-    body = pymunk.Body(100000, 100000)
+    body = space.static_body
     body.position = (223, 10)
     largeur_trait = 1.0
     l1 = pymunk.Segment(body, (5.0, 75.0), (5.0, 515.0), largeur_trait)
@@ -178,7 +178,7 @@ def add_lines(space):
     l4 = pymunk.Segment(body, (156.0, 550.0), (300.0, 550.0), largeur_trait)
     l5 = pymunk.Segment(body, (376.0, 480.0), (376.0, 67.0), largeur_trait)
     l6 = pymunk.Segment(body, (330.0, 67.0), (376.0, 67.0), largeur_trait)
-    l7 = pymunk.Segment(body, (354.0, 400), (354.0, 67), 2.0)
+    l7 = pymunk.Segment(body, (356.0, 400), (356.0, 67), 5.0)
     l8 = pymunk.Segment(body, (355, 105), (375.0, 105), largeur_trait)
     addSegment([(5, 312), (45, 238), (45, 232), (5, 210)], body, space, largeur_trait, False)
     addSegment([(352, 395), (306, 314), (338, 275), (326, 256), (352, 208)], body, space, largeur_trait, False)
@@ -198,12 +198,6 @@ def add_lines(space):
     arcG((49, 109), (93, 64), (139, 157), body, space, largeur_trait)
     arcG((322, 146), (312, 146), (317, 146), body, space, largeur_trait)
 
-    centreRotation = pymunk.PinJoint(body, rotation_center_body, (0, 0), (0, 0))
-    centreRotation2 = pymunk.PinJoint(body, rotation_center_body, (390, 0), (390, 0))
-    centreRotation3 = pymunk.PinJoint(body, rotation_center_body, (0, 580), (0, 580))
-    centreRotation4 = pymunk.PinJoint(body, rotation_center_body, (390, 580), (390, 580))
-
-    space.add(body, centreRotation, centreRotation2, centreRotation3, centreRotation4)
     space.add(l1, l2, l3, l4, l5, l6, l7, l8, l9)
 
 
@@ -213,24 +207,13 @@ add_lines(space)
 ###############################
 
 
-
-### walls
-static_lines = [pymunk.Segment(space.static_body, (612, 0), (612, 600), 1)
-    , pymunk.Segment(space.static_body, (212, 0), (212, 600), 1)
-    , pymunk.Segment(space.static_body, (212, 600), (612, 600), 1)
-                ]
-for line in static_lines:
-    line.elasticity = 0.7
-    line.group = 1
-space.add(static_lines)
-
 fp = [(7, -7), (-55, 0), (7, 7)]
 mass = 100
 moment = pymunk.moment_for_poly(mass, fp)
 
 # right flipper
 r_flipper_body = pymunk.Body(mass, moment)
-r_flipper_body.position = 470, 69
+r_flipper_body.position = 470, 60
 r_flipper_shape = pymunk.Poly(r_flipper_body, fp)
 space.add(r_flipper_body, r_flipper_shape)
 
@@ -238,19 +221,19 @@ r_flipper_joint_body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
 r_flipper_joint_body.position = r_flipper_body.position
 j = pymunk.PinJoint(r_flipper_body, r_flipper_joint_body, (0, 0), (0, 0))
 # todo: tweak values of spring better
-s = pymunk.DampedRotarySpring(r_flipper_body, r_flipper_joint_body, 0.61, 50000000, 2000000)
+s = pymunk.DampedRotarySpring(r_flipper_body, r_flipper_joint_body, 0.4, 50000000, 2000000)
 space.add(j, s)
 
 # left flipper
 l_flipper_body = pymunk.Body(mass, moment)
-l_flipper_body.position = 333, 69
+l_flipper_body.position = 333, 60
 l_flipper_shape = pymunk.Poly(l_flipper_body, [(-x, y) for x, y in fp])
 space.add(l_flipper_body, l_flipper_shape)
 
 l_flipper_joint_body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
 l_flipper_joint_body.position = l_flipper_body.position
 j = pymunk.PinJoint(l_flipper_body, l_flipper_joint_body, (0, 0), (0, 0))
-s = pymunk.DampedRotarySpring(l_flipper_body, l_flipper_joint_body, -0.61, 50000000, 2000000)
+s = pymunk.DampedRotarySpring(l_flipper_body, l_flipper_joint_body, -0.4, 50000000, 2000000)
 space.add(j, s)
 
 r_flipper_shape.group = l_flipper_shape.group = 1
@@ -313,7 +296,7 @@ while running:
 
         elif event.type == KEYDOWN and event.key == K_b:
 
-            mass = 10
+            mass = 1
             radius = 4
             inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
             body = pymunk.Body(mass, inertia)
@@ -343,10 +326,10 @@ while running:
             Ppoussoir = (x, y)
             timeball = pygame.time.get_ticks()
             timeball2 = timeball
-            energyball = ((timeball2 - timeball1) + 2000)*4
+            energyball = ((timeball2 - timeball1) + 2000)*4 / 10
             print("energyball", energyball)
             if energyball > 20000:
-                body.apply_impulse_at_local_point(Vec2d.unit() * 20000, (-100, 0))
+                body.apply_impulse_at_local_point(Vec2d.unit() * 2000, (-100, 0))
             else:
                 body.apply_impulse_at_local_point(Vec2d.unit() * energyball, (-100, 0))
 
