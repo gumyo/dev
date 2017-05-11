@@ -68,6 +68,13 @@ bumper_cinq = pygame.image.load("images/Bumper_cinq.png").convert_alpha()
 ### Obstacles
 obstacle_right = pygame.image.load("images/obstacleRigth.png").convert_alpha()
 obstacle_left = pygame.image.load("images/obstacleLeft.png").convert_alpha()
+Cchambre = pygame.image.load("images/ContourChambre.png").convert_alpha()
+Echambre = pygame.image.load("images/interieurChambre.png").convert_alpha()
+Item_raquette_droite = pygame.image.load("images/Item_raquette_droite.png").convert_alpha()
+Item_raquette_gauche = pygame.image.load("images/Item_raquette_gauche.png").convert_alpha()
+Top_droite = pygame.image.load("images/Top_A_Droite.png").convert_alpha()
+Bloqueur_droit = pygame.image.load("images/bloqueurDroit.png").convert_alpha()
+Bloqueur_gauche = pygame.image.load("images/bloqueurGauche.png").convert_alpha()
 
 
 
@@ -120,39 +127,56 @@ def mouvv(mouv, dep):
 ##### Contour josselin #####
 
 
+def coordFromAngle(angle, R):
+    return [round(R * cos(angle)), round(R * sin(angle))]
+
+
+def getCoordArray(firstAngle, lastAngle, R):
+    lCoord = []
+    firstPoint = coordFromAngle(firstAngle, R)
+    lastPoint = coordFromAngle(lastAngle, R)
+    lCoord.append(firstPoint)
+    angle = firstAngle
+    increment = 1 / abs(firstPoint[0] - lastPoint[0])
+    while angle < lastAngle - increment:
+        angle += increment
+        lCoord.append(coordFromAngle(angle, R))
+    lCoord.append(lastPoint)
+    return lCoord
+
+def angleFromCoord(coords, R):
+    simpleCoords = [coords[0] / R, coords[1] / R]
+    setAngle = acos(simpleCoords[0])
+    if simpleCoords[1] >= 0:
+        return setAngle
+    else:
+        return 2 * pi - setAngle
+
+
 def arcG(A, B, C, body, space, largeur_trait):
     R = sqrt((C[0] - A[0]) ** 2 + (C[1] - A[1]) ** 2)
-    coeff = round(sqrt((B[0] - A[0]) ** 2 + (B[1] - A[1]) ** 2)) + 3
-    AB = [B[0] - A[0], B[1] - A[1]]
-    CA = [A[0] - C[0], A[1] - C[1]]
-    alpha = asin(sqrt(AB[0] ** 2 + AB[1] ** 2) / (2 * R)) * 2  # calcul de l'angle
-    omega = alpha / coeff
-    betaH = pi - acos(CA[0] / R)
-    gammaV = pi - acos(CA[1] / R)
-    Cord1 = [C[0] + sin(omega) * R * (-1 if CA[0] < 0 else 1), C[1] + cos(omega) * R * (-1 if CA[1] < 0 else 1)]
-    print(betaH, gammaV)
+    A = [A[0] - C[0], A[1] - C[1]]
+    B = [B[0] - C[0], B[1] - C[1]]
+    firstAngle = angleFromCoord(A, R)
+    lastAngle = angleFromCoord(B, R)
+    lCoords = getCoordArray(firstAngle, lastAngle, R)
+    for i in range(0, len(lCoords) - 1):
+        space.add(pymunk.Segment(body, (lCoords[i][0] + C[0], lCoords[i][1] + C[1]), (lCoords[i + 1][0] + C[0], lCoords[i + 1][1] + C[1]), largeur_trait))
 
-    lCord = []
-    lCord.append(
-        A if (Cord1[0] - A[0]) ** 2 + (Cord1[1] - A[1]) ** 2 < (Cord1[0] - B[0]) ** 2 + (Cord1[1] - B[1]) ** 2 else B)
 
-    for i in range(1, coeff):
-        cordx = C[0] + sin(omega * i) * R * (-1 if CA[0] < 0 else 1)
-        cordy = C[1] + cos(omega * i) * R * (-1 if CA[1] < 0 else 1)
-        lCord.append([cordx, cordy])
-
-    lCord.append(
-        B if (Cord1[0] - A[0]) ** 2 + (Cord1[1] - A[1]) ** 2 < (Cord1[0] - B[0]) ** 2 + (Cord1[1] - B[1]) ** 2 else A)
-
-    for i in range(0, len(lCord) - 1):
-        space.add(pymunk.Segment(body, lCord[i], lCord[i + 1], largeur_trait))
+def addSegment(liste, body, space, largeur_trait, bol):
+    for i in range(1, len(liste)):
+        space.add(pymunk.Segment(body, liste[i - 1], liste[i], largeur_trait))
+    if bol == True:
+        print('test')
+        space.add(pymunk.Segment(body, liste[len(liste) - 1], liste[0], largeur_trait))
 
 
 def add_lines(space):
     rotation_center_body = pymunk.Body(body_type=pymunk.Body.STATIC)
     rotation_center_body.position = (223, 10)
 
-    body = pymunk.Body(10, 100000)
+    body = space.static_body
     body.position = (223, 10)
     largeur_trait = 1.0
     l1 = pymunk.Segment(body, (5.0, 75.0), (5.0, 515.0), largeur_trait)
@@ -160,29 +184,28 @@ def add_lines(space):
     l3 = pymunk.Segment(body, (110.0, 534.0), (156.0, 550.0), largeur_trait)
     l4 = pymunk.Segment(body, (156.0, 550.0), (300.0, 550.0), largeur_trait)
     l5 = pymunk.Segment(body, (376.0, 480.0), (376.0, 67.0), largeur_trait)
-    l6 = pymunk.Segment(body, (333.0, 67.0), (376.0, 67.0), largeur_trait)
-    l7 = pymunk.Segment(body, (353.0, 400), (353.0, 67), 3.0)
-    l8 = pymunk.Segment(body, (355, 100), (375.0, 100), largeur_trait)
-    l9 = pymunk.Segment(body, (5, 312), (45, 238), largeur_trait)
-    l10 = pymunk.Segment(body, (45, 238), (45, 232), largeur_trait)
-    l11 = pymunk.Segment(body, (45, 232), (5, 210), largeur_trait)
-    l12 = pymunk.Segment(body, (352, 395), (306, 314), largeur_trait)
-    l13 = pymunk.Segment(body, (306, 314), (338, 275), largeur_trait)
-    l14 = pymunk.Segment(body, (338, 275), (326, 256), largeur_trait)
-    l15 = pymunk.Segment(body, (326, 256), (352, 208), largeur_trait)
+    l6 = pymunk.Segment(body, (330.0, 67.0), (376.0, 67.0), largeur_trait)
+    l7 = pymunk.Segment(body, (356.0, 400), (356.0, 67), 5.0)
+    l8 = pymunk.Segment(body, (355, 105), (375.0, 105), largeur_trait)
+    addSegment([(5, 312), (45, 238), (45, 232), (5, 210)], body, space, largeur_trait, False)
+    addSegment([(352, 395), (306, 314), (338, 275), (326, 256), (352, 208)], body, space, largeur_trait, False)
+    addSegment([(27, 482), (27, 337), (72, 276), (144, 311), (144, 390), (155, 418), (155, 471), (133, 455), (133, 331), (48, 331), (41, 338), (41, 471), (33, 482), (27, 482)], body, space, largeur_trait, True)
+    addSegment([(108, 356), (72, 356), (60, 366), (60, 464), (62, 468), (94, 499), (100, 499), (122, 487), (126, 478), (126, 474), (114, 461), (113, 360)], body, space, largeur_trait, True)
+    l9 = pymunk.Segment(body, (174, 370), (174, 331), 4.0)
+    addSegment([(93, 64), (93, 59), (67, 59), (59, 51), (59, 62), (41, 62), (41, 105), (34, 105), (34, 160), (39, 160), (39, 109), (49,109)], body, space, largeur_trait, False)
+    addSegment([(322, 146), (322, 103), (330, 94), (330, 67), (301, 67), (301, 49), (284, 66), (259, 66), (312, 96), (312, 146)],  body, space, largeur_trait, False)
+    addSegment([(95, 97), (99, 97), (102,99), (102, 105), (80, 160), (80, 116), (77, 112), (77, 107)], body, space, largeur_trait, True)
+    addSegment([(258, 98), (252, 103), (279, 160), (282, 160), (282, 110)], body, space, largeur_trait, True)
+    addSegment([(309, 214), (317, 194), (317, 159), (315, 159), (296, 201), (295, 206), (302, 214)], body, space, largeur_trait, True)
 
     arcG((5.0, 75), (160, -5), (160, 185), body, space, largeur_trait)
-    arcG((190.0, -5.0), (333.0, 67.0), (190, 173), body, space, largeur_trait)
-    arcG((5, 515), (25, 534), (24.5, 514.5), body, space, largeur_trait)
+    arcG((190.0, -5.0), (330.0, 67.0), (190, 173), body, space, largeur_trait)
+    arcG((25, 534), (5, 515), (24.5, 514.5), body, space, largeur_trait)
     arcG((376, 480), (300, 550), (303, 477), body, space, largeur_trait)
-    #arcG((48, 108), (94, 64), (139, 157), body, space, largeur_trait)
+    arcG((49, 109), (93, 64), (139, 157), body, space, largeur_trait)
+    arcG((322, 146), (312, 146), (317, 146), body, space, largeur_trait)
 
-    centreRotation = pymunk.PinJoint(body, rotation_center_body, (0, 0), (0, 0))
-    centreRotation2 = pymunk.PinJoint(body, rotation_center_body, (390, 0), (390, 0))
-    centreRotation3 = pymunk.PinJoint(body, rotation_center_body, (0, 580), (0, 580))
-    centreRotation4 = pymunk.PinJoint(body, rotation_center_body, (390, 580), (390, 580))
-
-    space.add(l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14, l15, body, centreRotation, centreRotation2,centreRotation3, centreRotation4)
+    space.add(l1, l2, l3, l4, l5, l6, l7, l8, l9)
 
 
 add_lines(space)
@@ -191,24 +214,13 @@ add_lines(space)
 ###############################
 
 
-
-### walls
-static_lines = [pymunk.Segment(space.static_body, (612, 0), (612, 600), 1)
-    , pymunk.Segment(space.static_body, (212, 0), (212, 600), 1)
-    , pymunk.Segment(space.static_body, (212, 600), (612, 600), 1)
-                ]
-for line in static_lines:
-    line.elasticity = 0.7
-    line.group = 1
-space.add(static_lines)
-
 fp = [(7, -7), (-55, 0), (7, 7)]
 mass = 100
 moment = pymunk.moment_for_poly(mass, fp)
 
 # right flipper
 r_flipper_body = pymunk.Body(mass, moment)
-r_flipper_body.position = 470, 69
+r_flipper_body.position = 470, 60
 r_flipper_shape = pymunk.Poly(r_flipper_body, fp)
 space.add(r_flipper_body, r_flipper_shape)
 
@@ -216,19 +228,19 @@ r_flipper_joint_body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
 r_flipper_joint_body.position = r_flipper_body.position
 j = pymunk.PinJoint(r_flipper_body, r_flipper_joint_body, (0, 0), (0, 0))
 # todo: tweak values of spring better
-s = pymunk.DampedRotarySpring(r_flipper_body, r_flipper_joint_body, 0.61, 50000000, 2000000)
+s = pymunk.DampedRotarySpring(r_flipper_body, r_flipper_joint_body, 0.4, 50000000, 2000000)
 space.add(j, s)
 
 # left flipper
 l_flipper_body = pymunk.Body(mass, moment)
-l_flipper_body.position = 333, 69
+l_flipper_body.position = 333, 60
 l_flipper_shape = pymunk.Poly(l_flipper_body, [(-x, y) for x, y in fp])
 space.add(l_flipper_body, l_flipper_shape)
 
 l_flipper_joint_body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
 l_flipper_joint_body.position = l_flipper_body.position
 j = pymunk.PinJoint(l_flipper_body, l_flipper_joint_body, (0, 0), (0, 0))
-s = pymunk.DampedRotarySpring(l_flipper_body, l_flipper_joint_body, -0.61, 50000000, 2000000)
+s = pymunk.DampedRotarySpring(l_flipper_body, l_flipper_joint_body, -0.4, 50000000, 2000000)
 space.add(j, s)
 
 r_flipper_shape.group = l_flipper_shape.group = 1
@@ -253,7 +265,6 @@ for p in [(475, 355), (546, 400)]:
 ## Physics poussoir
 """
 coordfrm1y = 90
-
 def poussoir1(mass, coordfrm1y):
     for p in [(580, coordfrm1y)]:
         frm1 = [(0, 0), (0, 20), (20, 20), (20, 0)]
@@ -291,7 +302,7 @@ while running:
 
         elif event.type == KEYDOWN and event.key == K_b:
 
-            mass = 10
+            mass = 1
             radius = 4
             inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
             body = pymunk.Body(mass, inertia)
@@ -321,10 +332,10 @@ while running:
             Ppoussoir = (x, y)
             timeball = pygame.time.get_ticks()
             timeball2 = timeball
-            energyball = ((timeball2 - timeball1) + 2000)*4
+            energyball = ((timeball2 - timeball1) + 2000)*4 / 10
             print("energyball", energyball)
             if energyball > 20000:
-                body.apply_impulse_at_local_point(Vec2d.unit() * 20000, (-100, 0))
+                body.apply_impulse_at_local_point(Vec2d.unit() * 2000, (-100, 0))
             else:
                 body.apply_impulse_at_local_point(Vec2d.unit() * energyball, (-100, 0))
 
@@ -356,6 +367,14 @@ while running:
     screen.blit(bumper_cinq, (410, 190))
     screen.blit(obstacle_right, (528, 196))
     screen.blit(obstacle_left, (228, 278))
+    screen.blit(Cchambre, (248, 89))
+    screen.blit(Echambre, (282, 90))
+    screen.blit(Item_raquette_droite, (483, 440))
+    screen.blit(Item_raquette_gauche, (256, 426))
+    screen.blit(Top_droite, (514, 372))
+    screen.blit(Bloqueur_droit, (474, 430))
+    screen.blit(Bloqueur_gauche, (297, 428))
+
 
     screen.blit(left, (180, 380))
     screen.blit(right, (322, 382))
