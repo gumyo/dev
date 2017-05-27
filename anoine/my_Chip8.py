@@ -354,7 +354,7 @@ def initFnc(tblFnc, *args, **entrs):			#Permet de lire la rom en apelant les opc
              0xF065: rmpMem }
 
 
-def initial(opCode, regI, dessin, affich, pile, clavIn, memoire, index, lettres, tmpVxD, tmpVxS, contProg):
+def initial(opCode, regI, dessin, affich, pile, clavIn, memoire, index, lettres, delTmp, sonTmp, contProg):
 	clear()					#initialise les paramètres avant qu'une rom soit lancée
 
 	opCode = 0
@@ -365,8 +365,8 @@ def initial(opCode, regI, dessin, affich, pile, clavIn, memoire, index, lettres,
 	clavIn = 16*[0]
 	memoire = 4096*[0]
 	index = 0
-	tmpVxS = 0
-	tmpVxD = 0
+	sonTmp = 0
+	delTmp = 0
 	contProg = 0x200
 
 	n = 0
@@ -375,6 +375,60 @@ def initial(opCode, regI, dessin, affich, pile, clavIn, memoire, index, lettres,
 		n = n + 1
 
 
-def ...
+def boucle(opCode, contProg, memoire, vx, vy, tblFnc, delTmp, sonTmp):
+	opCode = (memoire[contProg] << 8) | memoire[contProg + 1]
+	contProg = contProg + 2
+
+	opera = opCode & 0xF000
+	try:
+		tblFnc[opera]()
+	except:
+		print ("instruction inconnue: %x" % opCode)
+
+	if delTmp > 0:
+		delTmp = delTmp - 1
+	if sonTmp > 0:
+		sonTmp = sonTmp - 1
+		if sonTmp == 0:
+			bip.play()
+
+def affPixel():
+	if dessin:
+		cmptlin = 0
+		n = 0
+		while n < 2048:
+			if affich[n] == 1:
+				pixi[n].x = (n % 64)*10
+				pixi[n].y = 310 - ((n/64)*10)
+				pixi[n].pixBuff = pixBuff
+			else:
+				pixi[n].pixBuff = None
+			n = n + 1
+		clear()
+		pixBuff.affPixel()
+		flip()
+		dessin = False
+
+def recupKey():
+
+def keyPress()
+
+def keyRelease()
+
+def main():
+	if len(sys.argv) <= 1:
+		print ("")
+		print ("")
+		return
+	initial()
+	romCharg(sys.argv[1])
+	while not has_exit:					#has_exit est spécifique à pyglet pour la fermeture
+		dispatch_events()
+		boucle()
+		affPixel()
+
+
+
+
 
 
