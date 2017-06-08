@@ -99,7 +99,7 @@ def mainCPU():
 	elif instruction == 0xF055:
 		memory = iN.stkVoVx(opcode, register, regI, memory)
 	elif instruction == 0xF065:
-		memory = iN.repVoVx(opcode, register, regI, memory)
+		register = iN.repVoVx(opcode, register, regI, memory)
 	print(hex(instruction))
 	point_pile += 2
 
@@ -138,7 +138,11 @@ def main():
 					action2 = False
 					screen.fill((0,0,0,255), (650, 20, 1920, 20))
 			if event.type == KEYDOWN and event.key == K_F3:
-					action3 = True
+				action3 = True
+			if event.type == KEYDOWN and event.key == K_F9:
+				save(display, point_stack, point_pile, register, regI, delay, sound, memory, stack)
+			if event.type == KEYDOWN and event.key == K_F10:
+				display, point_stack, point_pile, register, regI, delay, sound, memory, stack = load()
 
 		action1, action2, action3 = module(action1, action2, action3)
 

@@ -312,4 +312,4 @@ def repVoVx(opcode, register, regI, memory):  # FX65 remplit v0 à vx avec val m
     while i <= vx:
         register[i] = memory[regI + i]
         i += 1
-    return memory  #check
+    return register  #check
